@@ -1,14 +1,80 @@
 # wf
 
-_WorkFlowy CLI tool and library written in Go_
+_organize your brain… as code_
 
-## Testing
+`wf` can generate [WorkFlowy](https://workflowy.com) templates with arbitrary
+logic.
+
+By convention, templates must reside in `$WF_DIR/templates`, and the only
+requirement is that they must return `Item` object.
+
+The simplest possible template is:
+
+```js
+Item("Hello, World!");
+```
+
+You can use any valid JS as long as it's ES 5.1.
+Under the hood, `wf` relies on [dop251/goja][goja] package which supports only
+ES 5.1 yet.
+
+```js
+// $WF_DIR/templates/daily.js
+var date = new Date();
+
+var dayOfWeek = date.getDay();
+var isoDate = date.toISOString().split("T")[0];
+
+var todo = [];
+
+if (dayOfWeek === SATURDAY) {
+  todo.push(Item("Laundry"));
+}
+
+if ([MONDAY, WEDNESDAY, FRIDAY].indexOf(dayOfWeek) > -1) {
+  todo.push(
+    Item("Balance board workout", [
+      Item("Push-ups"),
+      Item("Squats"),
+      Item("Plank"),
+    ])
+  );
+}
+
+Item(isoDate, dayName(dayOfWeek), [
+  Item("Menu"),
+  Item("To do today", todo),
+]);
+```
+
+To use the template, run `wf template` command giving a name of the template
+file without `.js` extension:
 
 ```
-go test ./... -coverprofile cp.out
+$ wf template daily
 ```
 
-https://gist.github.com/ayakovlenko/768b58f2d485c1224ee66e6b0a552107
+The output of the command will be:
+
+```xml
+<opml version="1.0">
+  <body>
+    <outline text="2020-05-15" _note="Saturday">
+      <outline text="Menu">
+        <outline text="Meat"></outline>
+      </outline>
+      <outline text="To do today">
+        <outline text="Laundry"></outline>
+      </outline>
+    </outline>
+  </body>
+</opml>
+```
+
+When you paste this XML is into WorkFlowy, it's going to be transformed into
+a nice-looking list:
+
+![](https://i.imgur.com/kTOwuIr.png)
 
 ## Templates
 
@@ -42,3 +108,5 @@ if (param.date === "tomorrow") {
   date.setDate(date.getDate() + 1);
 }
 ```
+
+[goja]: https://github.com/dop251/goja
