@@ -20,17 +20,23 @@ func init() {
 	vm.Set("SATURDAY", 6)
 	vm.Set("SUNDAY", 7)
 
-	vm.Set("days", []string{
-		"Sunday",
-		"Monday",
-		"Tuesday",
-		"Wednesday",
-		"Thursday",
-		"Friday",
-		"Saturday",
-	})
+	{
+		dayNames := []string{
+			"Sunday",
+			"Monday",
+			"Tuesday",
+			"Wednesday",
+			"Thursday",
+			"Friday",
+			"Saturday",
+		}
 
-	vm.Set("env", vm.NewObject())
+		vm.Set("dayName", func(day int) string {
+			return dayNames[day]
+		})
+	}
+
+	vm.Set("param", vm.NewObject())
 }
 
 var tplLib = `
@@ -65,7 +71,7 @@ func EvalTemplate(
 	env map[string]interface{},
 ) (*Item, error) {
 
-	vmEnv := vm.Get("env").ToObject(vm)
+	vmEnv := vm.Get("param").ToObject(vm)
 	for k, v := range env {
 		vmEnv.Set(k, v)
 	}
