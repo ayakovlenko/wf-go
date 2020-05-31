@@ -1,19 +1,31 @@
 package main
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"wf"
 
 	"github.com/pkg/errors"
 )
 
-func loadTemplate(name string, env map[string]interface{}) (*wf.Item, error) {
+func locateTemplateDir() (string, error) {
 	wfDir, ok := os.LookupEnv("WF_DIR")
 	if !ok {
-		return nil, errors.New("WF_DIR is not defined")
+		return "", errors.New("WF_DIR is not defined")
 	}
-	filename := filepath.Join(wfDir, "templates", name+".js")
+
+	return filepath.Join(wfDir, "templates"), nil
+}
+
+func loadTemplate(name string, env map[string]interface{}) (*wf.Item, error) {
+	tplDir, err := locateTemplateDir()
+	if err != nil {
+		return nil, err
+	}
+
+	filename := filepath.Join(tplDir, name+".js")
 
 	f, err := os.Open(filename)
 	if err != nil {
@@ -21,4 +33,27 @@ func loadTemplate(name string, env map[string]interface{}) (*wf.Item, error) {
 	}
 
 	return wf.EvalTemplate(name+".js", f, env)
+}
+
+func getAvailableTemplates() ([]string, error) {
+	tplDir, err := locateTemplateDir()
+	if err != nil {
+		return nil, err
+	}
+
+	files, err := ioutil.ReadDir(tplDir)
+	if err != nil {
+		return nil, err
+	}
+
+	tpls := []string{}
+	for _, f := range files {
+		name := f.Name()
+
+		if strings.HasSuffix(name, ".js") {
+			tpls = append(tpls, strings.TrimSuffix(name, ".js"))
+		}
+	}
+
+	return tpls, nil
 }

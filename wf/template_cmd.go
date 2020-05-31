@@ -26,7 +26,9 @@ func runRemplateCmd(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(args) == 0 {
-		availableTemplates()
+		if err := printAvailableTemplates(); err != nil {
+			return err
+		}
 
 		return nil
 	}
@@ -64,12 +66,18 @@ func runRemplateCmd(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func availableTemplates() {
-	tpls := []string{"daily", "decision"}
+func printAvailableTemplates() error {
+	tpls, err := getAvailableTemplates()
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("available templates:\n\n")
 	for _, k := range tpls {
 		fmt.Printf("- %s\n", k)
 	}
+
+	return nil
 }
 
 func init() {
