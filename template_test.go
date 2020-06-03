@@ -27,7 +27,7 @@ func TestEvalTemplate(t *testing.T) {
 		r := strings.NewReader(`
 			var date = new Date("2020-05-18");
 
-			if (env.date === "tomorrow") {
+			if (param.date === "tomorrow") {
 				date.setDate(date.getDate() + 1);
 			}
 
