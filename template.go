@@ -41,12 +41,12 @@ func init() {
 
 var tplLib = `
 	function Item() {
-		var getType = function (x) {
-			var t = Object.prototype.toString.call(x);
-			return t.substring(8, t.length - 1);
-		};
-
 		var getTypeSignature = function (args) {
+			var getType = function (x) {
+				var t = Object.prototype.toString.call(x);
+				return t.substring(8, t.length - 1);
+			};
+
 			var types = [];
 			for (var i = 0; i < args.length; i++) {
 				types.push(getType(args[i]));
@@ -54,13 +54,11 @@ var tplLib = `
 			return types.join(", ");
 		};
 
-		var signature = getTypeSignature(arguments);
-
 		var title;
 		var note = null;
 		var items = null;
 
-		switch (signature) {
+		switch (getTypeSignature(arguments)) {
 			case "String":
 				title = arguments[0];
 				break;
