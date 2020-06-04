@@ -110,8 +110,20 @@ const SUNDAY    = 7;
 
 ### Parameters
 
-Template parameter passed with `--param` / `-p` parameters can be accessed
-through globally available `param` object:
+Template parameters are passed after template name and have the following
+syntax:
+
+```bash
+$ wf template <name> [key=value ...]
+```
+
+Example:
+
+```bash
+$ wf template daily date=tomorrow
+```
+
+To access parameters in templates, use global `param` object:
 
 ```js
 var date = new Date();

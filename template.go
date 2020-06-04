@@ -51,7 +51,8 @@ var tplLib = `
 		};
 
 		var item = {};
-		switch (getTypeSignature(arguments)) {
+		var signature = getTypeSignature(arguments);
+		switch (signature) {
 			case "String":
 				break;
 			case "String, String":

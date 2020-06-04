@@ -11,8 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var tplParams []string
-
 var templateCmd = &cobra.Command{
 	Use:     "template",
 	Aliases: []string{"tpl"},
@@ -35,8 +33,8 @@ func runRemplateCmd(cmd *cobra.Command, args []string) error {
 
 	env := map[string]interface{}{}
 	tplName := args[0]
-	for _, arg := range tplParams {
-		k, v := parseTemplateParam(arg)
+	for _, param := range args[1:] {
+		k, v := parseTemplateParam(param)
 		env[k] = v
 	}
 
@@ -82,7 +80,6 @@ func printAvailableTemplates() error {
 
 func init() {
 	templateCmd.Flags().Bool("json", false, "output as JSON")
-	templateCmd.Flags().StringSliceVarP(&tplParams, "param", "p", []string{}, "")
 
 	rootCmd.AddCommand(
 		templateCmd,
