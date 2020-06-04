@@ -78,6 +78,18 @@ a nice-looking list:
 
 ## Templates
 
+### Item DSL
+
+```ts
+function Item(title: string): Item
+
+function Item(title: string, note: string): Item
+
+function Item(title: string, items: Array<Item>): Item
+
+function Item(title: string, note: string, items: Array<Item>): Item
+```
+
 ### Built-in functions
 
 ```ts
