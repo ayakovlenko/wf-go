@@ -46,51 +46,37 @@ var tplLib = `
 				var t = Object.prototype.toString.call(x);
 				return t.substring(8, t.length - 1);
 			};
-
-			var types = [];
-			for (var i = 0; i < args.length; i++) {
-				types.push(getType(args[i]));
-			}
-			return types.join(", ");
+			args = Array.prototype.slice.apply(args);
+			return args.map(getType).join(", ");
 		};
 
-		var title;
-		var note = null;
-		var items = null;
-
+		var item = {};
 		switch (getTypeSignature(arguments)) {
 			case "String":
-				title = arguments[0];
 				break;
 			case "String, String":
-				title = arguments[0];
-				note = arguments[1];
+				item.note = arguments[1];
 				break;
 			case "String, Array":
-				title = arguments[0];
-				items = arguments[1];
+				item.items = arguments[1];
 				break;
 			case "String, String, Array":
-				title = arguments[0];
-				note = arguments[1];
-				items = arguments[2];
+				item.note = arguments[1];
+				item.items = arguments[2];
 				break;
 			default:
 				throw new Error("unknown signature: Item(" + signature + ")");
 		}
+		item.title = arguments[0];
 
 		// filter items
-		if (items) {
-			items = items.filter(function (item) {
+		if (item.items) {
+			item.items = item.items.filter(function (item) {
 				return Boolean(item);
 			});
 		}
 
-		return {
-			title: title,
-			note: note,
-			items: items,
-		};
+		return item;
 	}
 `
 
