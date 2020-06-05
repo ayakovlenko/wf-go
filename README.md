@@ -22,17 +22,15 @@ ES 5.1 yet.
 // $WF_DIR/templates/daily.js
 var date = new Date();
 
-var dayOfWeek = date.getDay();
-
 var isoDate = date.toISOString().split("T")[0];
 
 var todo = Item("To do today");
 
-if (dayOfWeek === SATURDAY) {
+if (date.isSaturday()) {
   todo.add(Item("Laundry"));
 }
 
-if ([MONDAY, WEDNESDAY, FRIDAY].indexOf(dayOfWeek) > -1) {
+if (date.isMonday() || date.isWednesday() || date.isFriday()) {
   todo.add(
     Item("Workout", [
       Item("Push-ups"),
@@ -42,10 +40,14 @@ if ([MONDAY, WEDNESDAY, FRIDAY].indexOf(dayOfWeek) > -1) {
   );
 }
 
-Item(isoDate, dayName(dayOfWeek), [
-  Item("Menu"),
-  todo,
-]);
+Item(
+  isoDate,
+  date.getDayName(),
+  [
+    Item("Menu"),
+    todo,
+  ]
+);
 ```
 
 To use the template, run `wf template` command giving a name of the template
@@ -95,8 +97,24 @@ function Item(title: string, note: string, items: Array<Item>): Item
 
 ### Built-in functions
 
-```ts
-function dayName(day: int): string
+```js
+Date.prototype.getDayName
+
+Date.prototype.isMonday
+
+Date.prototype.isTuesday
+
+Date.prototype.isWednesday
+
+Date.prototype.isThursday
+
+Date.prototype.isFriday
+
+Date.prototype.isSaturday
+
+Date.prototype.isSunday
+
+Date.prototype.getDayName
 ```
 
 ### Built-in constants

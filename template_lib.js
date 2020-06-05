@@ -1,3 +1,6 @@
+// Item
+// ----
+
 function __Item(args) {
   var getTypeSignature = function (args) {
     var getType = function (x) {
@@ -35,7 +38,7 @@ function __Item(args) {
   }
 }
 
-Item.prototype.addItem = function (item) {
+__Item.prototype.add = function (item) {
   if (this.items) {
     this.items.push(item);
     return;
@@ -44,12 +47,53 @@ Item.prototype.addItem = function (item) {
   this.items = [item];
 };
 
-function item() {
+function Item() {
   return new __Item(arguments);
 }
 
-var root = item("parent");
+// Date
+// ----
 
-root.addItem(item("child"));
+Date.prototype.isMonday = function () {
+  return this.getDay() === MONDAY;
+};
 
-console.log(root);
+Date.prototype.isTuesday = function () {
+  return this.getDay() === TUESDAY;
+};
+
+Date.prototype.isWednesday = function () {
+  return this.getDay() === WEDNESDAY;
+};
+
+Date.prototype.isThursday = function () {
+  return this.getDay() === THURSDAY;
+};
+
+Date.prototype.isFriday = function () {
+  return this.getDay() === FRIDAY;
+};
+
+Date.prototype.isSaturday = function () {
+  return this.getDay() === SATURDAY;
+};
+
+Date.prototype.isSunday = function () {
+  return this.getDay() === SUNDAY;
+};
+
+Date.prototype.getDayName = (function () {
+  var DAY_NAMES = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  return function () {
+    return DAY_NAMES[this.getDay()];
+  };
+})();
