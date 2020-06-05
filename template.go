@@ -40,7 +40,7 @@ func init() {
 }
 
 var tplLib = `
-	function Item() {
+	function __Item(args) {
 		var getTypeSignature = function (args) {
 			var getType = function (x) {
 				var t = Object.prototype.toString.call(x);
@@ -50,34 +50,44 @@ var tplLib = `
 			return args.map(getType).join(", ");
 		};
 
-		var item = {};
-		var signature = getTypeSignature(arguments);
+		var signature = getTypeSignature(args);
 		switch (signature) {
 			case "String":
 				break;
 			case "String, String":
-				item.note = arguments[1];
+				this.note = args[1];
 				break;
 			case "String, Array":
-				item.items = arguments[1];
+				this.items = args[1];
 				break;
 			case "String, String, Array":
-				item.note = arguments[1];
-				item.items = arguments[2];
+				this.note = args[1];
+				this.items = args[2];
 				break;
 			default:
 				throw new Error("unknown signature: Item(" + signature + ")");
 		}
-		item.title = arguments[0];
+		this.title = args[0];
 
 		// filter items
-		if (item.items) {
-			item.items = item.items.filter(function (item) {
+		if (this.items) {
+			this.items = this.items.filter(function (item) {
 				return Boolean(item);
 			});
 		}
+	}
 
-		return item;
+	__Item.prototype.add = function (item) {
+		if (this.items) {
+			this.items.push(item);
+			return;
+		}
+
+		this.items = [item];
+	};
+
+	function Item() {
+		return new __Item(arguments);
 	}
 `
 

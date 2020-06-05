@@ -23,17 +23,18 @@ ES 5.1 yet.
 var date = new Date();
 
 var dayOfWeek = date.getDay();
+
 var isoDate = date.toISOString().split("T")[0];
 
-var todo = [];
+var todo = Item("To do today");
 
 if (dayOfWeek === SATURDAY) {
-  todo.push(Item("Laundry"));
+  todo.add(Item("Laundry"));
 }
 
 if ([MONDAY, WEDNESDAY, FRIDAY].indexOf(dayOfWeek) > -1) {
-  todo.push(
-    Item("Balance board workout", [
+  todo.add(
+    Item("Workout", [
       Item("Push-ups"),
       Item("Squats"),
       Item("Plank"),
@@ -43,7 +44,7 @@ if ([MONDAY, WEDNESDAY, FRIDAY].indexOf(dayOfWeek) > -1) {
 
 Item(isoDate, dayName(dayOfWeek), [
   Item("Menu"),
-  Item("To do today", todo),
+  todo,
 ]);
 ```
 
@@ -79,6 +80,8 @@ a nice-looking list:
 ## Templates
 
 ### Item DSL
+
+You have 4 overloaded functions to define items:
 
 ```ts
 function Item(title: string): Item

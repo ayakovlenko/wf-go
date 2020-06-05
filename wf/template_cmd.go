@@ -20,6 +20,19 @@ var templateCmd = &cobra.Command{
 	RunE:    runRemplateCmd,
 }
 
+var templatePathCmd = &cobra.Command{
+	Use: "path",
+	Run: func(cmd *cobra.Command, args []string) {
+		tplDir, err := locateTemplateDir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		fmt.Print(tplDir)
+	},
+}
+
 func runRemplateCmd(cmd *cobra.Command, args []string) error {
 	jsonOutFlag, err := cmd.Flags().GetBool("json")
 	if err != nil {
@@ -81,14 +94,6 @@ func printAvailableTemplates() error {
 	return nil
 }
 
-func init() {
-	templateCmd.Flags().Bool("json", false, "output as JSON")
-
-	rootCmd.AddCommand(
-		templateCmd,
-	)
-}
-
 func parseTemplateParam(arg string) (key string, value interface{}) {
 	idx := strings.Index(arg, "=")
 
@@ -104,8 +109,8 @@ func parseTemplateParam(arg string) (key string, value interface{}) {
 }
 
 func locateTemplateDir() (string, error) {
-	wfDir, ok := os.LookupEnv("WF_DIR")
-	if !ok {
+	wfDir, defined := os.LookupEnv("WF_DIR")
+	if !defined {
 		return "", errors.New("WF_DIR is not defined")
 	}
 
@@ -149,4 +154,12 @@ func getAvailableTemplates() ([]string, error) {
 	}
 
 	return tpls, nil
+}
+
+func init() {
+	templateCmd.Flags().Bool("json", false, "output as JSON")
+
+	rootCmd.AddCommand(templateCmd)
+
+	templateCmd.AddCommand(templatePathCmd)
 }
