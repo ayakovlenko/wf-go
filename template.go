@@ -20,22 +20,6 @@ func init() {
 	vm.Set("SATURDAY", 6)
 	vm.Set("SUNDAY", 7)
 
-	{
-		dayNames := []string{
-			"Sunday",
-			"Monday",
-			"Tuesday",
-			"Wednesday",
-			"Thursday",
-			"Friday",
-			"Saturday",
-		}
-
-		vm.Set("dayName", func(day int) string {
-			return dayNames[day]
-		})
-	}
-
 	vm.Set("param", vm.NewObject())
 }
 

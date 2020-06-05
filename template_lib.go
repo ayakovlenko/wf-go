@@ -1,6 +1,8 @@
 package wf
 
 var tplLib = `
+// Item
+
 function __Item(args) {
   var getTypeSignature = function (args) {
     var getType = function (x) {
@@ -50,4 +52,50 @@ __Item.prototype.add = function (item) {
 function Item() {
   return new __Item(arguments);
 }
+
+// Date
+
+Date.prototype.isMonday = function () {
+  return this.getDay() === MONDAY;
+};
+
+Date.prototype.isTuesday = function () {
+  return this.getDay() === TUESDAY;
+};
+
+Date.prototype.isWednesday = function () {
+  return this.getDay() === WEDNESDAY;
+};
+
+Date.prototype.isThursday = function () {
+  return this.getDay() === THURSDAY;
+};
+
+Date.prototype.isFriday = function () {
+  return this.getDay() === FRIDAY;
+};
+
+Date.prototype.isSaturday = function () {
+  return this.getDay() === SATURDAY;
+};
+
+Date.prototype.isSunday = function () {
+  return this.getDay() === SUNDAY;
+};
+
+Date.prototype.getDayName = (function () {
+  var DAY_NAMES = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  return function () {
+    return DAY_NAMES[this.getDay()];
+  }
+})();
 `
