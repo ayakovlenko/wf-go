@@ -35,7 +35,7 @@ function __Item(args) {
   }
 }
 
-Item.prototype.addItem = function (item) {
+__Item.prototype.add = function (item) {
   if (this.items) {
     this.items.push(item);
     return;
@@ -44,12 +44,6 @@ Item.prototype.addItem = function (item) {
   this.items = [item];
 };
 
-function item() {
+function Item() {
   return new __Item(arguments);
 }
-
-var root = item("parent");
-
-root.addItem(item("child"));
-
-console.log(root);

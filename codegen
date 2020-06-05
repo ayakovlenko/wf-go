@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -eax
+
+rm template_lib.go
+echo 'package wf' >> template_lib.go
+echo '' >> template_lib.go
+echo 'var tplLib = `' >> template_lib.go
+cat template_lib.js >> template_lib.go
+echo '`' >> template_lib.go
