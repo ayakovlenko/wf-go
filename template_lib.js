@@ -1,16 +1,18 @@
+// Common
+// ------
+var getTypeSignature = function (args) {
+  var getType = function (x) {
+    var t = Object.prototype.toString.call(x);
+    return t.substring(8, t.length - 1);
+  };
+  args = Array.prototype.slice.apply(args);
+  return args.map(getType).join(", ");
+};
+
 // Item
 // ----
 
 function __Item(args) {
-  var getTypeSignature = function (args) {
-    var getType = function (x) {
-      var t = Object.prototype.toString.call(x);
-      return t.substring(8, t.length - 1);
-    };
-    args = Array.prototype.slice.apply(args);
-    return args.map(getType).join(", ");
-  };
-
   var signature = getTypeSignature(args);
   switch (signature) {
     case "String":
@@ -38,18 +40,33 @@ function __Item(args) {
   }
 }
 
-__Item.prototype.add = function (item) {
+function Item() {
+  return new __Item(arguments);
+}
+
+__Item.prototype.add = function () {
+  var item;
+  var signature = getTypeSignature(arguments);
+  switch (signature) {
+    case "String":
+      item = Item(arguments[0]);
+      break;
+    case "Object":
+      item = arguments[0];
+      break;
+    default:
+      throw new Error("unknown signature: Item.add(" + signature + ")");
+  }
+
   if (this.items) {
     this.items.push(item);
     return;
   }
 
   this.items = [item];
-};
 
-function Item() {
-  return new __Item(arguments);
-}
+  return this;
+};
 
 // Date
 // ----
