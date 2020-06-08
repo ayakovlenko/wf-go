@@ -1,12 +1,13 @@
 // Common
 // ------
+
 var getTypeSignature = function (args) {
-  var getType = function (x) {
-    var t = Object.prototype.toString.call(x);
-    return t.substring(8, t.length - 1);
-  };
-  args = Array.prototype.slice.apply(args);
-  return args.map(getType).join(", ");
+  return Array.prototype.slice
+    .apply(args)
+    .map(function (arg) {
+      return arg.constructor.name;
+    })
+    .join(", ");
 };
 
 // Item
@@ -51,7 +52,7 @@ __Item.prototype.add = function () {
     case "String":
       item = Item(arguments[0]);
       break;
-    case "Object":
+    case "__Item":
       item = arguments[0];
       break;
     default:
