@@ -3,12 +3,14 @@ package wf
 var tplLib = `
 // Common
 // ------
+
 var getTypeSignature = function (args) {
-  var getType = function (x) {
-    return x.constructor.name;
-  };
-  args = Array.prototype.slice.apply(args);
-  return args.map(getType).join(", ");
+  return Array.prototype.slice
+    .apply(args)
+    .map(function (arg) {
+      return arg.constructor.name;
+    })
+    .join(", ");
 };
 
 // Item
@@ -70,6 +72,23 @@ __Item.prototype.add = function () {
   return this;
 };
 
+__Item.prototype.on = function () {
+  var date;
+  var signature = getTypeSignature(arguments);
+  switch (signature) {
+    case "String":
+      date = new Date(arguments[0]);
+      break;
+    case "Date":
+      date = arguments[0];
+      break;
+    default:
+      throw new Error("unknown signature: Item.on(" + signature + ")");
+  }
+
+  return date.isToday() ? this : null;
+};
+
 // Date
 // ----
 
@@ -99,6 +118,16 @@ Date.prototype.isSaturday = function () {
 
 Date.prototype.isSunday = function () {
   return this.getDay() === SUNDAY;
+};
+
+Date.prototype.isToday = function () {
+  var today = new Date();
+
+  return (
+    this.getDate() == today.getDate() &&
+    this.getMonth() == today.getMonth() &&
+    this.getFullYear() == today.getFullYear()
+  );
 };
 
 Date.prototype.getDayName = (function () {

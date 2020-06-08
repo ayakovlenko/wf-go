@@ -69,6 +69,23 @@ __Item.prototype.add = function () {
   return this;
 };
 
+__Item.prototype.on = function () {
+  var date;
+  var signature = getTypeSignature(arguments);
+  switch (signature) {
+    case "String":
+      date = new Date(arguments[0]);
+      break;
+    case "Date":
+      date = arguments[0];
+      break;
+    default:
+      throw new Error("unknown signature: Item.on(" + signature + ")");
+  }
+
+  return date.isToday() ? this : null;
+};
+
 // Date
 // ----
 
@@ -98,6 +115,16 @@ Date.prototype.isSaturday = function () {
 
 Date.prototype.isSunday = function () {
   return this.getDay() === SUNDAY;
+};
+
+Date.prototype.isToday = function () {
+  var today = new Date();
+
+  return (
+    this.getDate() == today.getDate() &&
+    this.getMonth() == today.getMonth() &&
+    this.getFullYear() == today.getFullYear()
+  );
 };
 
 Date.prototype.getDayName = (function () {
