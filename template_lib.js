@@ -5,7 +5,7 @@ var getTypeSignature = function (args) {
   return Array.prototype.slice
     .apply(args)
     .map(function (arg) {
-      return arg.constructor.name;
+      return arg ? arg.constructor.name : "null";
     })
     .join(", ");
 };
@@ -49,6 +49,8 @@ __Item.prototype.add = function () {
   var item;
   var signature = getTypeSignature(arguments);
   switch (signature) {
+    case "null":
+      return this;
     case "String":
       item = Item(arguments[0]);
       break;
@@ -61,7 +63,7 @@ __Item.prototype.add = function () {
 
   if (this.items) {
     this.items.push(item);
-    return;
+    return this;
   }
 
   this.items = [item];
