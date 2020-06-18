@@ -1,18 +1,22 @@
 package wf
 
 var tplLib = `
+// Common
+// ------
+
+var getTypeSignature = function (args) {
+  return Array.prototype.slice
+    .apply(args)
+    .map(function (arg) {
+      return arg ? arg.constructor.name : "null";
+    })
+    .join(", ");
+};
+
 // Item
+// ----
 
 function __Item(args) {
-  var getTypeSignature = function (args) {
-    var getType = function (x) {
-      var t = Object.prototype.toString.call(x);
-      return t.substring(8, t.length - 1);
-    };
-    args = Array.prototype.slice.apply(args);
-    return args.map(getType).join(", ");
-  };
-
   var signature = getTypeSignature(args);
   switch (signature) {
     case "String":
@@ -40,20 +44,55 @@ function __Item(args) {
   }
 }
 
-__Item.prototype.add = function (item) {
-  if (this.items) {
-    this.items.push(item);
-    return;
-  }
-
-  this.items = [item];
-};
-
 function Item() {
   return new __Item(arguments);
 }
 
+__Item.prototype.add = function () {
+  var item;
+  var signature = getTypeSignature(arguments);
+  switch (signature) {
+    case "null":
+      return this;
+    case "String":
+      item = Item(arguments[0]);
+      break;
+    case "__Item":
+      item = arguments[0];
+      break;
+    default:
+      throw new Error("unknown signature: Item.add(" + signature + ")");
+  }
+
+  if (this.items) {
+    this.items.push(item);
+    return this;
+  }
+
+  this.items = [item];
+
+  return this;
+};
+
+__Item.prototype.on = function () {
+  var date;
+  var signature = getTypeSignature(arguments);
+  switch (signature) {
+    case "String":
+      date = new Date(arguments[0]);
+      break;
+    case "Date":
+      date = arguments[0];
+      break;
+    default:
+      throw new Error("unknown signature: Item.on(" + signature + ")");
+  }
+
+  return date.isToday() ? this : null;
+};
+
 // Date
+// ----
 
 Date.prototype.isMonday = function () {
   return this.getDay() === MONDAY;
@@ -83,6 +122,16 @@ Date.prototype.isSunday = function () {
   return this.getDay() === SUNDAY;
 };
 
+Date.prototype.isToday = function () {
+  var today = new Date();
+
+  return (
+    this.getDate() == today.getDate() &&
+    this.getMonth() == today.getMonth() &&
+    this.getFullYear() == today.getFullYear()
+  );
+};
+
 Date.prototype.getDayName = (function () {
   var DAY_NAMES = [
     "Sunday",
@@ -96,6 +145,6 @@ Date.prototype.getDayName = (function () {
 
   return function () {
     return DAY_NAMES[this.getDay()];
-  }
+  };
 })();
 `
