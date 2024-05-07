@@ -18,6 +18,10 @@ You can use any valid JS as long as it's ES 5.1.
 Under the hood, `wf` relies on [dop251/goja][goja] package which supports only
 ES 5.1 yet.
 
+```sh
+WF_DIR="$(pwd)/examples" ./run tpl daily
+```
+
 ```js
 // $WF_DIR/templates/daily.js
 var date = new Date();
