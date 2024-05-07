@@ -1,19 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
-var rootCmd = &cobra.Command{
-	Use: "wf",
-}
-
 func main() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Printf("%+v\n", err)
-		os.Exit(1)
+	app := &cli.App{
+		Name: "wf",
+		Commands: []*cli.Command{
+			templateCmd,
+		},
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }

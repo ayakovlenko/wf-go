@@ -11,45 +11,43 @@ import (
 	"wf"
 
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
-var templateCmd = &cobra.Command{
-	Use:     "template",
+var templateCmd = &cli.Command{
+	Name:    "template",
 	Aliases: []string{"tpl"},
-	RunE:    runRemplateCmd,
-}
-
-var templatePathCmd = &cobra.Command{
-	Use: "path",
-	Run: func(cmd *cobra.Command, args []string) {
-		tplDir, err := locateTemplateDir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		fmt.Print(tplDir)
+	Flags: []cli.Flag{
+		&cli.BoolFlag{
+			Name:     "json",
+			Required: false,
+		},
+	},
+	Action: runRemplateCmd,
+	Subcommands: []*cli.Command{
+		templatePathCmd,
 	},
 }
 
-func runRemplateCmd(cmd *cobra.Command, args []string) error {
-	jsonOutFlag, err := cmd.Flags().GetBool("json")
-	if err != nil {
-		return errors.Wrapf(err, "failed to get flag")
-	}
-
-	if len(args) == 0 {
-		if err := printAvailableTemplates(); err != nil {
+var templatePathCmd = &cli.Command{
+	Name: "path",
+	Action: func(cCtx *cli.Context) error {
+		tplDir, err := locateTemplateDir()
+		if err != nil {
 			return err
 		}
 
-		return nil
-	}
+		fmt.Print(tplDir)
 
+		return nil
+	},
+}
+
+func runRemplateCmd(cCtx *cli.Context) error {
 	env := map[string]interface{}{}
-	tplName := args[0]
-	for _, param := range args[1:] {
+	tplName := cCtx.Args().First()
+	params := cCtx.Args().Tail()
+	for _, param := range params {
 		k, v := parseTemplateParam(param)
 		env[k] = v
 	}
@@ -59,7 +57,7 @@ func runRemplateCmd(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "error loading template")
 	}
 
-	if jsonOutFlag {
+	if cCtx.Bool("json") {
 		jsonOut, err := json.MarshalIndent(wfItem, "", "  ")
 		if err != nil {
 			return errors.Wrap(err, "failed to marshall to xml")
@@ -154,12 +152,4 @@ func getAvailableTemplates() ([]string, error) {
 	}
 
 	return tpls, nil
-}
-
-func init() {
-	templateCmd.Flags().Bool("json", false, "output as JSON")
-
-	rootCmd.AddCommand(templateCmd)
-
-	templateCmd.AddCommand(templatePathCmd)
 }
